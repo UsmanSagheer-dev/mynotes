@@ -4,6 +4,7 @@ import { TextField, Button, Typography, Container, Box, Card, CardContent } from
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../../store/slices/userSlice';
 import { useNavigate } from 'react-router-dom';
+import './login.css'; // Ensure to import the CSS file
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -41,6 +42,7 @@ function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              className="animated-input" // Add the class for animation
             />
             <TextField
               label="Password"
@@ -51,6 +53,7 @@ function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              className="animated-input" // Add the class for animation
             />
             {loginError && (
               <Typography color="error" variant="body2" sx={{ mt: 1 }}>

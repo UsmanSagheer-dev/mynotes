@@ -8,13 +8,14 @@ import InstagramIcon from '@mui/icons-material/Instagram';
 
 function Footer() {
   return (
+    <div>
     <Box
       sx={{
-        width: '100%',
+
         bgcolor: 'grey.900',
         color: 'white',
-        py: 3,
-        px: 2,
+       
+       height:"100px",
         mt: 4,
         display: 'flex',
         flexDirection: { xs: 'column', md: 'row' },
@@ -52,6 +53,7 @@ function Footer() {
         </IconButton>
       </Box>
     </Box>
+    </div>
   );
 }
 
