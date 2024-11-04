@@ -5,7 +5,7 @@ import { doc, setDoc, getDocs, collection, deleteDoc, updateDoc, serverTimestamp
 // Thunk for adding a note
 export const addNote = createAsyncThunk(
   'notes/addNote',
-  async ({ title, category, content, userId }, { rejectWithValue }) => {
+  async ({ title, category, content, userId,imageURL }, { rejectWithValue }) => {
     try {
       if (!userId) {
         throw new Error("User ID is missing. Make sure the user is logged in.");
@@ -17,6 +17,7 @@ export const addNote = createAsyncThunk(
         title,
         category,
         content,
+        imageURL,
         date: serverTimestamp(),
       };
       await setDoc(noteRef, newNote);
