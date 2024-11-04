@@ -5,19 +5,19 @@ import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
-    apiKey: "AIzaSyA0IY0K7RPM9HCax3T4cLbo-wqdUAiVdHs",
-    authDomain: "notesapp-fcb0f.firebaseapp.com",
-    projectId: "notesapp-fcb0f",
-    storageBucket: "notesapp-fcb0f.firebasestorage.app",
-    messagingSenderId: "680960712772",
-    appId: "1:680960712772:web:8f028c09937aee68c05c11",
-    measurementId: "G-4NEQX26GY1"
+  apiKey: "AIzaSyBneMsxvM_onIhHcnBu9bP7IASI7xWA7VA",
+  authDomain: "facebook-clone-copy-90fd0.firebaseapp.com",
+  databaseURL: "https://facebook-clone-copy-90fd0-default-rtdb.firebaseio.com",
+  projectId: "facebook-clone-copy-90fd0",
+  storageBucket: "facebook-clone-copy-90fd0.appspot.com",
+  messagingSenderId: "522087393808",
+  appId: "1:522087393808:web:059199313ae0851495f895",
+  measurementId: "G-FQ45YL58L5"
   };
   
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firebase services
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
