@@ -1,25 +1,36 @@
-// src/store/slices/userSlice.js
+
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { auth, db } from '../../config/firebase/firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { auth, db, storage } from '../../config/firebase/firebase';
+import { createUserWithEmailAndPassword,signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-
-
-// Signup thunk
 export const signUp = createAsyncThunk(
   'user/signUp',
-  async ({ email, password, displayName }, { rejectWithValue }) => {
+  async ({ email, password, displayName, bio, address, image }, { rejectWithValue }) => {
     try {
+
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
+     
       await updateProfile(user, { displayName });
+
+      let imageUrl = '';
+      if (image) {
+      
+        const storageRef = ref(storage, `profileImages/${user.uid}`);
+        await uploadBytes(storageRef, image);
+        imageUrl = await getDownloadURL(storageRef);
+      }
 
       await setDoc(doc(db, 'users', user.uid), {
         userId: user.uid,
         displayName,
         email: user.email,
+        bio,
+        address,
+        imageUrl,
         createdAt: serverTimestamp(),
       });
 
@@ -27,6 +38,9 @@ export const signUp = createAsyncThunk(
         userId: user.uid,
         displayName,
         email: user.email,
+        bio,
+        address,
+        imageUrl,
       };
     } catch (error) {
       return rejectWithValue(error.message);
@@ -34,7 +48,6 @@ export const signUp = createAsyncThunk(
   }
 );
 
-// Login thunk
 export const login = createAsyncThunk(
   'user/login',
   async ({ email, password }, { rejectWithValue }) => {
@@ -72,13 +85,13 @@ const userSlice = createSlice({
     logout(state) {
       state.isAuthenticated = false;
       state.user = null;
-      state.loginError = null; // Clear any login errors on logout
-      state.signupError = null; // Clear signup errors as well
+      state.loginError = null;
+      state.signupError = null;
     },
   },
   extraReducers: (builder) => {
     builder
-      // Signup cases
+     
       .addCase(signUp.fulfilled, (state, action) => {
         state.isAuthenticated = true;
         state.user = action.payload;
@@ -87,15 +100,15 @@ const userSlice = createSlice({
       .addCase(signUp.rejected, (state, action) => {
         state.signupError = action.payload;
       })
-      // Login cases
+
       .addCase(login.fulfilled, (state, action) => {
         state.isAuthenticated = true;
         state.user = action.payload;
-        state.loginError = null; // Clear any previous login errors
+        state.loginError = null; 
       })
       .addCase(login.rejected, (state, action) => {
         state.isAuthenticated = false;
-        state.loginError = action.payload; // Store the error message
+        state.loginError = action.payload;
       });
   },
 });

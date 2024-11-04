@@ -17,7 +17,7 @@ const ProtectedRoute = ({ children }) => {
         dispatch(setUser({ uid: user.uid, email: user.email, displayName: user.displayName })); // Update Redux
       } else {
         setIsAuthenticated(false);
-        dispatch(clearUser()); // Clear user data in Redux
+        dispatch(clearUser()); 
       }
     });
 

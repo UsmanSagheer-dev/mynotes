@@ -1,78 +1,138 @@
-// src/components/pages/home/Home.js
-import React, { useState, useEffect } from 'react';
-import { TextField, Button, Typography, Container, Box, Card, List, ListItem, ListItemText } from '@mui/material';
-import Navbar from '../../shared/navbar/Navbar';
+import React, { useState } from "react";
+import { Typography, Container, Box, Button, Modal, TextField } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import Navbar from "../../shared/navbar/Navbar";
+import Footer from "../../footer/Footer";
+import { useDispatch } from 'react-redux';
+import { addNote } from '../../../store/slices/noteSlice';
+import { auth } from '../../../config/firebase/firebase';
 
 function Home() {
-  const [note, setNote] = useState('');
-  const [savedNotes, setSavedNotes] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [newNote, setNewNote] = useState("");
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const userId = auth.currentUser ? auth.currentUser.uid : null; // Get logged-in user ID
+  
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
-  // Load saved notes from localStorage when the component mounts
-  useEffect(() => {
-    const notesFromStorage = JSON.parse(localStorage.getItem('notes'));
-    if (notesFromStorage) {
-      setSavedNotes(notesFromStorage);
+  const handleAddNote = () => {
+    if (!userId) {
+      console.error("User is not logged in.");
+      return;
     }
-  }, []);
 
-  // Update localStorage whenever savedNotes changes
-  useEffect(() => {
-    localStorage.setItem('notes', JSON.stringify(savedNotes));
-  }, [savedNotes]);
+    const noteData = {
+      title,
+      category,
+      content: newNote,
+      userId, // Attach userId to associate note with the logged-in user
+    };
 
-  const handleSaveNote = () => {
-    if (note.trim()) {
-      setSavedNotes([...savedNotes, note]);
-      setNote(''); // Clear the note input
-    }
-  };
+    // Dispatch the addNote action to save the note to Firebase
+    dispatch(addNote(noteData)).then((result) => {
+      if (result.meta.requestStatus === 'fulfilled') {
+        console.log("Note successfully added to Firebase:", result.payload);
+        handleClose(); // Close modal on successful save
+        navigate("/notes"); // Navigate to the Notes page
+      } else {
+        console.error("Error saving note:", result.payload);
+      }
+    });
 
-  const handleClearNotes = () => {
-    setSavedNotes([]);
+    // Clear form fields
+    setTitle("");
+    setCategory("");
+    setNewNote("");
   };
 
   return (
-    <Container maxWidth="md" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
-      <Navbar/>
-      <Typography variant="h4" component="h1" sx={{ mb: 2 }}>
-        Notepad
-      </Typography>
+    <Container
+      maxWidth="xl"
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        overflow: "hidden",
+        minHeight: "100vh",
+      }}
+    >
+      <Navbar />
+      <Box sx={{ marginTop: 4, textAlign: "center" }}>
+        <Typography variant="h3" component="h1" gutterBottom>
+          Welcome to Your Notes App!
+        </Typography>
+        <Typography variant="subtitle1" color="textSecondary">
+          Manage your notes effectively with all the features you need.
+        </Typography>
+      </Box>
 
-      <Card sx={{ width: '100%', p: 2, mb: 2 }}>
-        <TextField
-          label="Write your note here..."
-          multiline
-          rows={8}
-          variant="outlined"
-          fullWidth
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-        />
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-          <Button variant="contained" color="primary" onClick={handleSaveNote}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleOpen}
+        sx={{ marginTop: 4 }}
+      >
+        Add New Notes
+      </Button>
+
+      <Modal open={open} onClose={handleClose}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="h6" component="h2" gutterBottom>
+            Add a New Note
+          </Typography>
+
+          <TextField
+            label="Title"
+            variant="outlined"
+            fullWidth
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            sx={{ marginBottom: 2 }}
+          />
+
+          <TextField
+            label="Category"
+            variant="outlined"
+            fullWidth
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            sx={{ marginBottom: 2 }}
+          />
+
+          <TextField
+            label="New Note"
+            variant="outlined"
+            fullWidth
+            value={newNote}
+            onChange={(e) => setNewNote(e.target.value)}
+            sx={{ marginBottom: 2 }}
+          />
+
+          <Button variant="contained" color="primary" onClick={handleAddNote}>
             Save Note
           </Button>
-          <Button variant="outlined" color="secondary" onClick={handleClearNotes}>
-            Clear All Notes
-          </Button>
         </Box>
-      </Card>
+      </Modal>
 
-      <Typography variant="h5" component="h2" sx={{ mb: 1 }}>
-        Saved Notes
-      </Typography>
-      <Card sx={{ width: '100%', p: 2 }}>
-        <List>
-          {savedNotes.length === 0 && (
-            <Typography color="textSecondary">No saved notes yet. Write something and save it!</Typography>
-          )}
-          {savedNotes.map((note, index) => (
-            <ListItem key={index}>
-              <ListItemText primary={note} />
-            </ListItem>
-          ))}
-        </List>
-      </Card>
+      <Footer />
     </Container>
   );
 }
