@@ -1,21 +1,55 @@
-import React, { useEffect, useState } from 'react';
-import { AppBar, Toolbar, Typography, Button, Avatar, Box, IconButton, Menu, MenuItem } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../../../store/slices/userSlice';
-import HomeIcon from '@mui/icons-material/Home';
-import NoteIcon from '@mui/icons-material/Note';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { doc, getDoc } from 'firebase/firestore'; // Import Firestore methods
-import { db } from '../../../config/firebase/firebase';
+import React, { useEffect, useState } from "react";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Avatar,
+  Box,
+  IconButton,
+  Menu,
+  MenuItem,
+  styled,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../../store/slices/userSlice";
+import HomeIcon from "@mui/icons-material/Home";
+import NoteIcon from "@mui/icons-material/Note";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../../config/firebase/firebase";
+
+// Styled components
+const StyledAppBar = styled(AppBar)({
+  width:"100%",
+  backgroundColor: "#333", 
+  boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)", // Soft shadow effect
+});
+
+const LogoTypography = styled(Typography)({
+  flexGrow: 1,
+  cursor: "pointer",
+  fontWeight: "bold",
+  fontSize: "1.5rem",
+  color: "#fff",
+});
+
+const NavButton = styled(Button)({
+  color: "#f5f5f5",
+  margin: "0 10px",
+  "&:hover": {
+    backgroundColor: "rgba(255, 255, 255, 0.1)", 
+  },
+});
 
 function Navbar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.user); // Get the full user object from Redux
+  const user = useSelector((state) => state.user.user);
   const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
 
-  const [userData, setUserData] = useState(null); // State to store fetched user data
+  const [userData, setUserData] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
 
   // Handle menu actions
@@ -30,23 +64,21 @@ function Navbar() {
   const handleAuthAction = () => {
     if (isAuthenticated) {
       dispatch(logout());
-      navigate('/login');
+      navigate("/login");
     } else {
-      navigate('/login');
+      navigate("/login");
     }
   };
 
-  // Fetch user data from Firestore on component mount if the user is logged in
   useEffect(() => {
     const fetchUserData = async () => {
       if (user && user.userId) {
         try {
-          // Fetch the user document from Firestore
-          const userDocRef = doc(db, 'users', user.userId);
+          const userDocRef = doc(db, "users", user.userId);
           const userDoc = await getDoc(userDocRef);
-          
+
           if (userDoc.exists()) {
-            setUserData(userDoc.data()); // Store user data (including imageUrl) in local state
+            setUserData(userDoc.data());
           } else {
             console.log("User document not found in Firestore");
           }
@@ -60,43 +92,44 @@ function Navbar() {
   }, [user]);
 
   return (
-    <AppBar position="static" color="primary">
-      <Toolbar>
-        <Typography
-          variant="h6"
-          component="div"
-          sx={{ flexGrow: 1 }}
-          onClick={() => navigate('/home')}
-          style={{ cursor: 'pointer' }}
-        >
-          Notepad App
-        </Typography>
+    <StyledAppBar position="static" sx={{with:"100%",}}>
+      <Toolbar >
+        <LogoTypography onClick={() => navigate("/home")}>
+          Smart Notes
+        </LogoTypography>
 
-        <Button color="inherit" startIcon={<HomeIcon />} onClick={() => navigate('/home')}>
+        <NavButton startIcon={<HomeIcon />} onClick={() => navigate("/home")}>
           Home
-        </Button>
+        </NavButton>
 
-        <Button color="inherit" startIcon={<NoteIcon />} onClick={() => navigate('/notes')}>
+        <NavButton startIcon={<NoteIcon />} onClick={() => navigate("/notes")}>
           Notes
-        </Button>
+        </NavButton>
 
-        <Button color="inherit" startIcon={<AccountCircleIcon />} onClick={() => navigate('/profile')}>
+        <NavButton
+          startIcon={<AccountCircleIcon />}
+          onClick={() => navigate("/profile")}
+        >
           Profile
-        </Button>
+        </NavButton>
 
         {isAuthenticated && (
           <Box display="flex" alignItems="center" ml={2}>
-            <IconButton onClick={handleMenuClick} sx={{ p: 0 }}>
+            <IconButton onClick={handleMenuClick} sx={{ p: 2 }}>
               {userData && userData.imageUrl ? (
                 <Avatar alt={userData.displayName} src={userData.imageUrl} />
               ) : (
-                <AccountCircleIcon fontSize="large" />
+                <AccountCircleIcon fontSize="large" style={{ color: "#fff" }} />
               )}
             </IconButton>
-            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+            >
               <MenuItem
                 onClick={() => {
-                  navigate('/profile');
+                  navigate("/profile");
                   handleMenuClose();
                 }}
               >
@@ -108,19 +141,17 @@ function Navbar() {
                   handleMenuClose();
                 }}
               >
-                {isAuthenticated ? 'Logout' : 'Login'}
+                {isAuthenticated ? "Logout" : "Login"}
               </MenuItem>
             </Menu>
           </Box>
         )}
 
         {!isAuthenticated && (
-          <Button color="inherit" onClick={handleAuthAction}>
-            Login
-          </Button>
+          <NavButton onClick={handleAuthAction}>Login</NavButton>
         )}
       </Toolbar>
-    </AppBar>
+    </StyledAppBar>
   );
 }
 
