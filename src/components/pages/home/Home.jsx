@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography, Container, Box, Button, styled } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../shared/navbar/Navbar";
 import Footer from "../../footer/Footer";
 import AddNoteModal from "../../notemodel/AddnoteModel";
+import { useSelector } from "react-redux";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../../config/firebase/firebase";
 const GlowButton = styled(Button)(({ theme }) => ({
   "--glow-color": "rgb(217, 176, 255)",
   "--glow-spread-color": "rgba(191, 123, 255, 0.781)",
@@ -47,13 +50,33 @@ const GlowButton = styled(Button)(({ theme }) => ({
 
 function Home() {
   const [open, setOpen] = useState(false);
-  const navigate = useNavigate();
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const user = useSelector((state) => state.user.user);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (user && user.userId) {
+        try {
+          const userDocRef = doc(db, "users", user.userId);
+          const userDoc = await getDoc(userDocRef);
+          console.log("🚀 ~ fetchUserData ~ userDoc:", userDoc)
 
+          if (userDoc.exists()) {
+
+          } else {
+            console.log("User document not found in Firestore");
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [user]);
   return (
-    <div style={{ backgroundColor: "gray", width: "100vw", margin: "0", padding: "0", display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <div style={{ width: "100vw", margin: "0", padding: "0", display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Container
         maxWidth={false}
         disableGutters

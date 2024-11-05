@@ -21,9 +21,9 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../config/firebase/firebase";
 
 const StyledAppBar = styled(AppBar)({
-  width:"100%",
-  backgroundColor: "#333", 
-  boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)", 
+  width: "100%",
+  backgroundColor: "#333",
+  boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
 });
 
 const LogoTypography = styled(Typography)({
@@ -38,7 +38,7 @@ const NavButton = styled(Button)({
   color: "#f5f5f5",
   margin: "0 10px",
   "&:hover": {
-    backgroundColor: "rgba(255, 255, 255, 0.1)", 
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
 });
 
@@ -46,9 +46,12 @@ function Navbar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
+  console.log("🚀 ~ Navbar ~ user:", user)
   const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
   const [userData, setUserData] = useState(null);
+  console.log("🚀 ~ Navbar ~ userData:", userData)
   const [anchorEl, setAnchorEl] = useState(null);
+
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -88,8 +91,8 @@ function Navbar() {
   }, [user]);
 
   return (
-    <StyledAppBar position="static" sx={{with:"100%",}}>
-      <Toolbar >
+    <StyledAppBar position="static">
+      <Toolbar>
         <LogoTypography onClick={() => navigate("/home")}>
           Smart Notes
         </LogoTypography>
@@ -111,7 +114,7 @@ function Navbar() {
 
         {isAuthenticated && (
           <Box display="flex" alignItems="center" ml={2}>
-            <IconButton onClick={handleMenuClick} sx={{ p: 2 }}>
+            <IconButton onClick={handleMenuClick} sx={{ p: 0 }}>
               {userData && userData.imageUrl ? (
                 <Avatar alt={userData.displayName} src={userData.imageUrl} />
               ) : (
