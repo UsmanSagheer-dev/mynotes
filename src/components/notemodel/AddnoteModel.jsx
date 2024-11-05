@@ -1,10 +1,9 @@
-// src/components/AddNoteModal.js
 
 import React, { useState } from "react";
 import { Box, Typography, Modal, TextField, Button, Input } from "@mui/material";
 import { useDispatch } from 'react-redux';
 import { addNote } from '../../store/slices/noteSlice';
-import { auth, storage } from '../../config/firebase/firebase'; // Import Firebase storage
+import { auth, storage } from '../../config/firebase/firebase';
 import { useNavigate } from "react-router-dom";
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -12,7 +11,7 @@ function AddNoteModal({ open, handleClose }) {
   const [newNote, setNewNote] = useState("");
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
-  const [image, setImage] = useState(null); // State for image file
+  const [image, setImage] = useState(null); 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userId = auth.currentUser ? auth.currentUser.uid : null;
@@ -31,8 +30,8 @@ function AddNoteModal({ open, handleClose }) {
     if (image) {
       try {
         const imageRef = ref(storage, `notes/${userId}/${image.name}`);
-        await uploadBytes(imageRef, image); // Upload image to Firebase Storage
-        imageURL = await getDownloadURL(imageRef); // Get image URL
+        await uploadBytes(imageRef, image); 
+        imageURL = await getDownloadURL(imageRef); 
       } catch (error) {
         console.error("Error uploading image:", error);
       }
@@ -43,7 +42,7 @@ function AddNoteModal({ open, handleClose }) {
       category,
       content: newNote,
       userId,
-      imageURL, // Save the image URL if it exists
+      imageURL, 
     };
 
     dispatch(addNote(noteData)).then((result) => {
@@ -59,7 +58,7 @@ function AddNoteModal({ open, handleClose }) {
     setTitle("");
     setCategory("");
     setNewNote("");
-    setImage(null); // Clear image state
+    setImage(null); 
   };
 
   return (
@@ -109,8 +108,6 @@ function AddNoteModal({ open, handleClose }) {
           onChange={(e) => setNewNote(e.target.value)}
           sx={{ marginBottom: 2 }}
         />
-
-        {/* Optional Image Input */}
         <Input
           type="file"
           accept="image/*"

@@ -20,11 +20,10 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../config/firebase/firebase";
 
-// Styled components
 const StyledAppBar = styled(AppBar)({
   width:"100%",
   backgroundColor: "#333", 
-  boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)", // Soft shadow effect
+  boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)", 
 });
 
 const LogoTypography = styled(Typography)({
@@ -48,11 +47,8 @@ function Navbar() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
   const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
-
   const [userData, setUserData] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
-
-  // Handle menu actions
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
   };

@@ -4,8 +4,6 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../../shared/navbar/Navbar";
 import Footer from "../../footer/Footer";
 import AddNoteModal from "../../notemodel/AddnoteModel";
-
-// Create a styled button component
 const GlowButton = styled(Button)(({ theme }) => ({
   "--glow-color": "rgb(217, 176, 255)",
   "--glow-spread-color": "rgba(191, 123, 255, 0.781)",
@@ -62,11 +60,11 @@ function Home() {
         sx={{
           display: "flex",
           flexDirection: "column",
-          justifyContent: "flex-start", // Allow content to start from the top
-          flex: 1, // Allow the container to grow and fill available space
+          justifyContent: "flex-start",
+          flex: 1, 
           margin: 0,
           padding: 0,
-          paddingBottom: '100px', // Add bottom padding to prevent content from overlapping footer
+          paddingBottom: '100px', 
         }}
       >
         <Box sx={{ width: "100%", backgroundColor: "yellow" }}>
@@ -91,7 +89,7 @@ function Home() {
         <AddNoteModal open={open} handleClose={handleClose} />
       </Container>
 
-      <Footer /> {/* Footer is fixed to the bottom of the screen */}
+      <Footer /> 
     </div>
   );
 }

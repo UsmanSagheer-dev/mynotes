@@ -1,26 +1,22 @@
-/* src/components/auth/Login.css */
 
 .animated-input {
     position: relative;
-    border: 1px solid #e5e7eb; /* Default border color */
-    transition: border-color 0.3s ease; /* Smooth transition for border color */
+    border: 1px solid #e5e7eb; 
+    transition: border-color 0.3s ease;
   }
-  
   .animated-input:focus {
-    border-color: #4F46E5; /* Change border color on focus */
-    animation: pulse-border 0.5s infinite; /* Start pulse animation on focus */
+    border-color: #4F46E5; 
+    animation: pulse-border 0.5s infinite; 
   }
-  
-  /* Keyframes for the border pulse animation */
   @keyframes pulse-border {
     0% {
-      border-color: #4F46E5; /* Start with the focus color */
+      border-color: #4F46E5; 
     }
     50% {
-      border-color: #9F7AEA; /* Change to a lighter color for pulse effect */
+      border-color: #9F7AEA; 
     }
     100% {
-      border-color: #4F46E5; /* Back to the original focus color */
+      border-color: #4F46E5; 
     }
   }
   

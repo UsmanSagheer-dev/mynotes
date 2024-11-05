@@ -16,9 +16,7 @@ function SignUp() {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const signupError = useSelector((state) => state.user.signupError);
-
   const handleImageUpload = (e) => {
     if (e.target.files[0]) {
       setImage(e.target.files[0]);
@@ -29,7 +27,6 @@ function SignUp() {
     e.preventDefault();
     setLoading(true);
 
-   
     const result = await dispatch(
       signUp({ email, password, displayName, bio, address, image })
     );
@@ -134,5 +131,4 @@ function SignUp() {
     </Container>
   );
 }
-
 export default SignUp;
