@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { TextField, Button, Typography, Container, Box, Card, CardContent } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../../store/slices/userSlice';
+import { login } from '../../store/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
 import './login.css'; 
 

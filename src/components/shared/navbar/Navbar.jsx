@@ -13,12 +13,10 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../../../store/slices/userSlice";
+import { logout } from "../../../store/slices/authSlice";
 import HomeIcon from "@mui/icons-material/Home";
 import NoteIcon from "@mui/icons-material/Note";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../../config/firebase/firebase";
 
 const StyledAppBar = styled(AppBar)({
   width: "100%",
@@ -46,10 +44,7 @@ function Navbar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
-  console.log("🚀 ~ Navbar ~ user:", user)
   const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
-  const [userData, setUserData] = useState(null);
-  console.log("🚀 ~ Navbar ~ userData:", userData)
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleMenuClick = (event) => {
@@ -68,27 +63,6 @@ function Navbar() {
       navigate("/login");
     }
   };
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (user && user.userId) {
-        try {
-          const userDocRef = doc(db, "users", user.userId);
-          const userDoc = await getDoc(userDocRef);
-
-          if (userDoc.exists()) {
-            setUserData(userDoc.data());
-          } else {
-            console.log("User document not found in Firestore");
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        }
-      }
-    };
-
-    fetchUserData();
-  }, [user]);
 
   return (
     <StyledAppBar position="static">
@@ -115,8 +89,8 @@ function Navbar() {
         {isAuthenticated && (
           <Box display="flex" alignItems="center" ml={2}>
             <IconButton onClick={handleMenuClick} sx={{ p: 0 }}>
-              {userData && userData.imageUrl ? (
-                <Avatar alt={userData.displayName} src={userData.imageUrl} />
+              {user && user.imageUrl ? (
+                <Avatar alt={user.displayName} src={user.imageUrl} />
               ) : (
                 <AccountCircleIcon fontSize="large" style={{ color: "#fff" }} />
               )}

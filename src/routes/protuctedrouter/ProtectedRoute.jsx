@@ -1,10 +1,11 @@
 // src/routes/protectedrouter/ProtectedRoute.js
+
 import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { auth } from '../../config/firebase/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useDispatch } from 'react-redux';
-import { setUser, clearUser } from '../../store/slices/userSlice'; // Actions to manage user state in Redux
+import { setUser, clearAuth } from '../../store/slices/authSlice'; // Import clearAuth instead of clearUser
 
 const ProtectedRoute = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
@@ -17,7 +18,7 @@ const ProtectedRoute = ({ children }) => {
         dispatch(setUser({ uid: user.uid, email: user.email, displayName: user.displayName })); // Update Redux
       } else {
         setIsAuthenticated(false);
-        dispatch(clearUser()); 
+        dispatch(clearAuth()); // Use clearAuth here
       }
     });
 
