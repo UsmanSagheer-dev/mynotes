@@ -26,7 +26,7 @@ const GlowButton = styled(Button)(({ theme }) => ({
   textShadow: "0 0 .5em var(--glow-color)",
   position: "relative",
   transition: "all 0.3s",
-  width: "230px",
+  width: "250px",
   "&::after": {
     pointerEvents: "none",
     content: '""',
