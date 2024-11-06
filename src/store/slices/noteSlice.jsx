@@ -1,18 +1,30 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { db } from '../../config/firebase/firebase';
-import { doc, setDoc, getDocs, collection, deleteDoc, updateDoc, serverTimestamp, query, where } from 'firebase/firestore';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { db } from "../../config/firebase/firebase";
+import {
+  doc,
+  setDoc,
+  getDocs,
+  collection,
+  deleteDoc,
+  updateDoc,
+  serverTimestamp,
+  query,
+  where,
+} from "firebase/firestore";
 
-// Thunk for adding a note
 export const addNote = createAsyncThunk(
-  'notes/addNote',
-  async ({ title, category, content, userId,imageURL }, { rejectWithValue }) => {
+  "notes/addNote",
+  async (
+    { title, category, content, userId, imageURL },
+    { rejectWithValue }
+  ) => {
     try {
       if (!userId) {
         throw new Error("User ID is missing. Make sure the user is logged in.");
       }
-      const noteRef = doc(collection(db, 'notes'));
+      const noteRef = doc(collection(db, "notes"));
       const newNote = {
-        noteId: noteRef.id, // Get the unique ID from Firestore
+        noteId: noteRef.id,
         userId,
         title,
         category,
@@ -21,7 +33,7 @@ export const addNote = createAsyncThunk(
         date: serverTimestamp(),
       };
       await setDoc(noteRef, newNote);
-      return newNote; // Return newNote so noteId can be used in the reducer
+      return newNote;
     } catch (error) {
       console.error("Error in addNote thunk:", error.message);
       return rejectWithValue(error.message);
@@ -29,14 +41,16 @@ export const addNote = createAsyncThunk(
   }
 );
 
-// Thunk for fetching notes associated with the logged-in user
 export const fetchNotes = createAsyncThunk(
-  'notes/fetchNotes',
+  "notes/fetchNotes",
   async (userId, { rejectWithValue }) => {
     try {
-      const q = query(collection(db, 'notes'), where("userId", "==", userId));
+      const q = query(collection(db, "notes"), where("userId", "==", userId));
       const querySnapshot = await getDocs(q);
-      const notes = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+      const notes = querySnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
       return notes;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -44,25 +58,23 @@ export const fetchNotes = createAsyncThunk(
   }
 );
 
-// Thunk for deleting a note by noteId
 export const deleteNote = createAsyncThunk(
-  'notes/deleteNote',
+  "notes/deleteNote",
   async (noteId, { rejectWithValue }) => {
     try {
-      await deleteDoc(doc(db, 'notes', noteId));
-      return noteId; // Return noteId for use in the reducer
+      await deleteDoc(doc(db, "notes", noteId));
+      return noteId;
     } catch (error) {
       return rejectWithValue(error.message);
     }
   }
 );
 
-// Thunk for updating a note by noteId
 export const updateNote = createAsyncThunk(
-  'notes/updateNote',
+  "notes/updateNote",
   async ({ noteId, updatedData }, { rejectWithValue }) => {
     try {
-      await updateDoc(doc(db, 'notes', noteId), updatedData);
+      await updateDoc(doc(db, "notes", noteId), updatedData);
       return { noteId, ...updatedData };
     } catch (error) {
       return rejectWithValue(error.message);
@@ -70,77 +82,75 @@ export const updateNote = createAsyncThunk(
   }
 );
 
-// Initial state for notes slice
 const initialState = {
-    notes: [], // Ensure this is an array
-    loading: false,
-    error: null,
-    addNoteLoading: false,
-    fetchNoteLoading: false,
-    deleteNoteLoading: false,
-    updateNoteLoading: false,
-  };
-  
+  notes: [],
+  loading: false,
+  error: null,
+  addNoteLoading: false,
+  fetchNoteLoading: false,
+  deleteNoteLoading: false,
+  updateNoteLoading: false,
+};
 
-// Create notes slice with extra reducers for async thunks
 const noteSlice = createSlice({
-  name: 'notes',
+  name: "notes",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // Add Note
+
       .addCase(addNote.pending, (state) => {
         state.addNoteLoading = true;
         state.error = null;
       })
       .addCase(addNote.fulfilled, (state, action) => {
         state.addNoteLoading = false;
-        state.notes.push(action.payload); // Add new note to state
+        state.notes.push(action.payload);
       })
       .addCase(addNote.rejected, (state, action) => {
         state.addNoteLoading = false;
         state.error = action.payload;
       })
-      
-      // Fetch Notes
+
       .addCase(fetchNotes.pending, (state) => {
         state.fetchNoteLoading = true;
         state.error = null;
       })
       .addCase(fetchNotes.fulfilled, (state, action) => {
         state.fetchNoteLoading = false;
-        state.notes = action.payload; // Populate state with fetched notes
+        state.notes = action.payload;
       })
       .addCase(fetchNotes.rejected, (state, action) => {
         state.fetchNoteLoading = false;
         state.error = action.payload;
       })
-      
-      // Delete Note
+
       .addCase(deleteNote.pending, (state) => {
         state.deleteNoteLoading = true;
         state.error = null;
       })
       .addCase(deleteNote.fulfilled, (state, action) => {
         state.deleteNoteLoading = false;
-        state.notes = state.notes.filter((note) => note.noteId !== action.payload); // Remove deleted note
+        state.notes = state.notes.filter(
+          (note) => note.noteId !== action.payload
+        );
       })
       .addCase(deleteNote.rejected, (state, action) => {
         state.deleteNoteLoading = false;
         state.error = action.payload;
       })
-      
-      // Update Note
+
       .addCase(updateNote.pending, (state) => {
         state.updateNoteLoading = true;
         state.error = null;
       })
       .addCase(updateNote.fulfilled, (state, action) => {
         state.updateNoteLoading = false;
-        const index = state.notes.findIndex((note) => note.noteId === action.payload.noteId);
+        const index = state.notes.findIndex(
+          (note) => note.noteId === action.payload.noteId
+        );
         if (index !== -1) {
-          state.notes[index] = { ...state.notes[index], ...action.payload }; 
+          state.notes[index] = { ...state.notes[index], ...action.payload };
         }
       })
       .addCase(updateNote.rejected, (state, action) => {

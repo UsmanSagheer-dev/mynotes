@@ -1,10 +1,7 @@
-// userSlice.js
+
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { db } from '../../config/firebase/firebase';
 import { doc, getDoc } from 'firebase/firestore';
-
-
-
 export const getCurrentUser = createAsyncThunk(
   'user/getCurrentUser',
   async ({ userId }, { rejectWithValue }) => {
@@ -14,7 +11,7 @@ export const getCurrentUser = createAsyncThunk(
         const docSnapshot = await getDoc(userDocRef);
 
         if (docSnapshot.exists()) {
-          return docSnapshot.data();  // Ensure imageUrl is part of this data
+          return docSnapshot.data(); 
         } else {
           return rejectWithValue("No user found.");
         }
@@ -27,13 +24,12 @@ export const getCurrentUser = createAsyncThunk(
   }
 );
 
-// Initial state with imageUrl
 const userSlice = createSlice({
   name: 'user',
   initialState: {
     user: null,
     loginError: null,
-    isAuthenticated: false,  // added isAuthenticated state
+    isAuthenticated: false,  
   },
   reducers: {
     clearUser(state) {
