@@ -24,7 +24,7 @@ export const addNote = createAsyncThunk(
       }
       const noteRef = doc(collection(db, "notes"));
       const newNote = {
-        noteId: noteRef.id,
+        noteId: noteRef.id, // Get the unique ID from Firestore
         userId,
         title,
         category,
@@ -33,7 +33,7 @@ export const addNote = createAsyncThunk(
         date: serverTimestamp(),
       };
       await setDoc(noteRef, newNote);
-      return newNote;
+      return newNote; // Return newNote so noteId can be used in the reducer
     } catch (error) {
       console.error("Error in addNote thunk:", error.message);
       return rejectWithValue(error.message);
@@ -62,8 +62,8 @@ export const deleteNote = createAsyncThunk(
   "notes/deleteNote",
   async (noteId, { rejectWithValue }) => {
     try {
-      await deleteDoc(doc(db, "notes", noteId));
-      return noteId;
+      await deleteDoc(doc(db, 'notes', noteId));
+      return noteId; // Return noteId for use in the reducer
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -83,15 +83,17 @@ export const updateNote = createAsyncThunk(
 );
 
 const initialState = {
-  notes: [],
-  loading: false,
-  error: null,
-  addNoteLoading: false,
-  fetchNoteLoading: false,
-  deleteNoteLoading: false,
-  updateNoteLoading: false,
-};
+    notes: [], // Ensure this is an array
+    loading: false,
+    error: null,
+    addNoteLoading: false,
+    fetchNoteLoading: false,
+    deleteNoteLoading: false,
+    updateNoteLoading: false,
+  };
+  
 
+// Create notes slice with extra reducers for async thunks
 const noteSlice = createSlice({
   name: "notes",
   initialState,
@@ -111,7 +113,8 @@ const noteSlice = createSlice({
         state.addNoteLoading = false;
         state.error = action.payload;
       })
-
+      
+      // Fetch Notes
       .addCase(fetchNotes.pending, (state) => {
         state.fetchNoteLoading = true;
         state.error = null;
@@ -124,22 +127,22 @@ const noteSlice = createSlice({
         state.fetchNoteLoading = false;
         state.error = action.payload;
       })
-
+      
+      // Delete Note
       .addCase(deleteNote.pending, (state) => {
         state.deleteNoteLoading = true;
         state.error = null;
       })
       .addCase(deleteNote.fulfilled, (state, action) => {
         state.deleteNoteLoading = false;
-        state.notes = state.notes.filter(
-          (note) => note.noteId !== action.payload
-        );
+        state.notes = state.notes.filter((note) => note.noteId !== action.payload); // Remove deleted note
       })
       .addCase(deleteNote.rejected, (state, action) => {
         state.deleteNoteLoading = false;
         state.error = action.payload;
       })
-
+      
+      // Update Note
       .addCase(updateNote.pending, (state) => {
         state.updateNoteLoading = true;
         state.error = null;
