@@ -2,9 +2,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { db } from '../../config/firebase/firebase';
 import { doc, getDoc } from 'firebase/firestore';
-
-
-
 export const getCurrentUser = createAsyncThunk(
   'user/getCurrentUser',
   async ({ userId }, { rejectWithValue }) => {
@@ -27,13 +24,13 @@ export const getCurrentUser = createAsyncThunk(
   }
 );
 
-
+// Initial state with imageUrl
 const userSlice = createSlice({
   name: 'user',
   initialState: {
     user: null,
     loginError: null,
-    isAuthenticated: false, 
+    isAuthenticated: false,  // added isAuthenticated state
   },
   reducers: {
     clearUser(state) {

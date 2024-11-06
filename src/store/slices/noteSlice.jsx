@@ -1,17 +1,30 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { db } from '../../config/firebase/firebase';
-import { doc, setDoc, getDocs, collection, deleteDoc, updateDoc, serverTimestamp, query, where } from 'firebase/firestore';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { db } from "../../config/firebase/firebase";
+import {
+  doc,
+  setDoc,
+  getDocs,
+  collection,
+  deleteDoc,
+  updateDoc,
+  serverTimestamp,
+  query,
+  where,
+} from "firebase/firestore";
 
 export const addNote = createAsyncThunk(
-  'notes/addNote',
-  async ({ title, category, content, userId,imageURL }, { rejectWithValue }) => {
+  "notes/addNote",
+  async (
+    { title, category, content, userId, imageURL },
+    { rejectWithValue }
+  ) => {
     try {
       if (!userId) {
         throw new Error("User ID is missing. Make sure the user is logged in.");
       }
-      const noteRef = doc(collection(db, 'notes'));
+      const noteRef = doc(collection(db, "notes"));
       const newNote = {
-        noteId: noteRef.id, 
+        noteId: noteRef.id, // Get the unique ID from Firestore
         userId,
         title,
         category,
@@ -20,7 +33,7 @@ export const addNote = createAsyncThunk(
         date: serverTimestamp(),
       };
       await setDoc(noteRef, newNote);
-      return newNote; 
+      return newNote; // Return newNote so noteId can be used in the reducer
     } catch (error) {
       console.error("Error in addNote thunk:", error.message);
       return rejectWithValue(error.message);
@@ -29,12 +42,15 @@ export const addNote = createAsyncThunk(
 );
 
 export const fetchNotes = createAsyncThunk(
-  'notes/fetchNotes',
+  "notes/fetchNotes",
   async (userId, { rejectWithValue }) => {
     try {
-      const q = query(collection(db, 'notes'), where("userId", "==", userId));
+      const q = query(collection(db, "notes"), where("userId", "==", userId));
       const querySnapshot = await getDocs(q);
-      const notes = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+      const notes = querySnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
       return notes;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -43,11 +59,11 @@ export const fetchNotes = createAsyncThunk(
 );
 
 export const deleteNote = createAsyncThunk(
-  'notes/deleteNote',
+  "notes/deleteNote",
   async (noteId, { rejectWithValue }) => {
     try {
       await deleteDoc(doc(db, 'notes', noteId));
-      return noteId;
+      return noteId; // Return noteId for use in the reducer
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -55,10 +71,10 @@ export const deleteNote = createAsyncThunk(
 );
 
 export const updateNote = createAsyncThunk(
-  'notes/updateNote',
+  "notes/updateNote",
   async ({ noteId, updatedData }, { rejectWithValue }) => {
     try {
-      await updateDoc(doc(db, 'notes', noteId), updatedData);
+      await updateDoc(doc(db, "notes", noteId), updatedData);
       return { noteId, ...updatedData };
     } catch (error) {
       return rejectWithValue(error.message);
@@ -67,7 +83,7 @@ export const updateNote = createAsyncThunk(
 );
 
 const initialState = {
-    notes: [], 
+    notes: [], // Ensure this is an array
     loading: false,
     error: null,
     addNoteLoading: false,
@@ -77,8 +93,9 @@ const initialState = {
   };
   
 
+// Create notes slice with extra reducers for async thunks
 const noteSlice = createSlice({
-  name: 'notes',
+  name: "notes",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -96,7 +113,8 @@ const noteSlice = createSlice({
         state.addNoteLoading = false;
         state.error = action.payload;
       })
-     
+      
+      // Fetch Notes
       .addCase(fetchNotes.pending, (state) => {
         state.fetchNoteLoading = true;
         state.error = null;
@@ -110,28 +128,32 @@ const noteSlice = createSlice({
         state.error = action.payload;
       })
       
+      // Delete Note
       .addCase(deleteNote.pending, (state) => {
         state.deleteNoteLoading = true;
         state.error = null;
       })
       .addCase(deleteNote.fulfilled, (state, action) => {
         state.deleteNoteLoading = false;
-        state.notes = state.notes.filter((note) => note.noteId !== action.payload);
+        state.notes = state.notes.filter((note) => note.noteId !== action.payload); // Remove deleted note
       })
       .addCase(deleteNote.rejected, (state, action) => {
         state.deleteNoteLoading = false;
         state.error = action.payload;
       })
       
+      // Update Note
       .addCase(updateNote.pending, (state) => {
         state.updateNoteLoading = true;
         state.error = null;
       })
       .addCase(updateNote.fulfilled, (state, action) => {
         state.updateNoteLoading = false;
-        const index = state.notes.findIndex((note) => note.noteId === action.payload.noteId);
+        const index = state.notes.findIndex(
+          (note) => note.noteId === action.payload.noteId
+        );
         if (index !== -1) {
-          state.notes[index] = { ...state.notes[index], ...action.payload }; 
+          state.notes[index] = { ...state.notes[index], ...action.payload };
         }
       })
       .addCase(updateNote.rejected, (state, action) => {

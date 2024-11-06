@@ -7,6 +7,7 @@ import AddNoteModal from "../../notemodel/AddnoteModel";
 import { useSelector } from "react-redux";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../config/firebase/firebase";
+import { styles } from "./homeStyles";
 const GlowButton = styled(Button)(({ theme }) => ({
   "--glow-color": "rgb(217, 176, 255)",
   "--glow-spread-color": "rgba(191, 123, 255, 0.781)",
@@ -18,14 +19,14 @@ const GlowButton = styled(Button)(({ theme }) => ({
   fontSize: "15px",
   fontWeight: "bold",
   backgroundColor: "var(--btn-color)",
-  borderRadius: "1em",
+  borderRadius: "5em",
   outline: "none",
   boxShadow:
     "0 0 1em .25em var(--glow-color), 0 0 4em 1em var(--glow-spread-color), inset 0 0 .75em .25em var(--glow-color)",
   textShadow: "0 0 .5em var(--glow-color)",
   position: "relative",
   transition: "all 0.3s",
-  width: "170px",
+  width: "230px",
   "&::after": {
     pointerEvents: "none",
     content: '""',
@@ -57,6 +58,7 @@ function Home() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const user = useSelector((state) => state.user.user);
+
   useEffect(() => {
     const fetchUserData = async () => {
       if (user && user.userId) {
@@ -77,17 +79,9 @@ function Home() {
 
     fetchUserData();
   }, [user]);
+
   return (
-    <div
-      style={{
-        width: "100vw",
-        margin: "0",
-        padding: "0",
-        display: "flex",
-        flexDirection: "column",
-        minHeight: "100vh",
-      }}
-    >
+    <div style={{ width: "100vw", margin: "0", padding: "0", display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Container
         maxWidth={false}
         disableGutters
@@ -95,17 +89,17 @@ function Home() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "flex-start",
-          flex: 1,
+          flex: 1, 
           margin: 0,
           padding: 0,
-          paddingBottom: "100px",
+          paddingBottom: '100px', 
         }}
       >
         <Box sx={{ width: "100%", backgroundColor: "yellow" }}>
           <Navbar />
         </Box>
 
-        <Box sx={{ marginTop: 4, textAlign: "center" }}>
+        <Box sx={styles.header}>
           <Typography variant="h3" component="h1" gutterBottom>
             Welcome to Your Notes App!
           </Typography>
@@ -113,17 +107,12 @@ function Home() {
             Manage your notes effectively with all the features you need.
           </Typography>
         </Box>
-        <Box
-          sx={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            mt: "25px",
-          }}
-        >
-          <GlowButton onClick={handleOpen}>Add New Notes</GlowButton>
-        </Box>
+<Box sx={{width:"100%",display:'flex',justifyContent:"center",alignItems:"center",mt:"25px"}}>
+<GlowButton onClick={handleOpen}>
+          Add New Notes
+        </GlowButton>
+</Box>
+      
 
         <AddNoteModal open={open} handleClose={handleClose} />
       </Container>
@@ -134,3 +123,4 @@ function Home() {
 }
 
 export default Home;
+
