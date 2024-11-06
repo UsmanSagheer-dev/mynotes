@@ -1,9 +1,8 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
-// Fetch environment variables from the process.env
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
   authDomain: process.env.REACT_APP_AUTH_DOMAIN,
@@ -15,18 +14,14 @@ const firebaseConfig = {
   measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 };
 
-// Log the API key to ensure it's loaded correctly
 console.log("🚀 ~ firebaseConfig.apiKey:", firebaseConfig.apiKey);
 
 if (!firebaseConfig.apiKey) {
   console.error("Error: Firebase API Key is missing!");
-  // Optionally, add a fallback or alert in production to ensure the app doesn’t run without the correct configuration
 }
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize other Firebase services
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
