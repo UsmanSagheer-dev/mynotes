@@ -1,4 +1,4 @@
-// authSlice.js
+
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { auth, db, storage } from '../../config/firebase/firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
@@ -62,7 +62,6 @@ export const login = createAsyncThunk(
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Immediately fetch user profile after login
       await dispatch(getCurrentUser({ userId: user.uid }));
 
       return {
@@ -118,7 +117,7 @@ const authSlice = createSlice({
   },
 });
 
-// Export actions and reducer
+
 export const { logout, setUser, clearAuth } = authSlice.actions;
 
 export default authSlice.reducer;

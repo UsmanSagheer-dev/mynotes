@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { db } from '../../config/firebase/firebase';
 import { doc, setDoc, getDocs, collection, deleteDoc, updateDoc, serverTimestamp, query, where } from 'firebase/firestore';
 
-// Thunk for adding a note
 export const addNote = createAsyncThunk(
   'notes/addNote',
   async ({ title, category, content, userId,imageURL }, { rejectWithValue }) => {
@@ -12,7 +11,7 @@ export const addNote = createAsyncThunk(
       }
       const noteRef = doc(collection(db, 'notes'));
       const newNote = {
-        noteId: noteRef.id, // Get the unique ID from Firestore
+        noteId: noteRef.id, 
         userId,
         title,
         category,
@@ -21,7 +20,7 @@ export const addNote = createAsyncThunk(
         date: serverTimestamp(),
       };
       await setDoc(noteRef, newNote);
-      return newNote; // Return newNote so noteId can be used in the reducer
+      return newNote; 
     } catch (error) {
       console.error("Error in addNote thunk:", error.message);
       return rejectWithValue(error.message);
@@ -29,7 +28,6 @@ export const addNote = createAsyncThunk(
   }
 );
 
-// Thunk for fetching notes associated with the logged-in user
 export const fetchNotes = createAsyncThunk(
   'notes/fetchNotes',
   async (userId, { rejectWithValue }) => {
@@ -44,20 +42,18 @@ export const fetchNotes = createAsyncThunk(
   }
 );
 
-// Thunk for deleting a note by noteId
 export const deleteNote = createAsyncThunk(
   'notes/deleteNote',
   async (noteId, { rejectWithValue }) => {
     try {
       await deleteDoc(doc(db, 'notes', noteId));
-      return noteId; // Return noteId for use in the reducer
+      return noteId;
     } catch (error) {
       return rejectWithValue(error.message);
     }
   }
 );
 
-// Thunk for updating a note by noteId
 export const updateNote = createAsyncThunk(
   'notes/updateNote',
   async ({ noteId, updatedData }, { rejectWithValue }) => {
@@ -70,9 +66,8 @@ export const updateNote = createAsyncThunk(
   }
 );
 
-// Initial state for notes slice
 const initialState = {
-    notes: [], // Ensure this is an array
+    notes: [], 
     loading: false,
     error: null,
     addNoteLoading: false,
@@ -82,56 +77,52 @@ const initialState = {
   };
   
 
-// Create notes slice with extra reducers for async thunks
 const noteSlice = createSlice({
   name: 'notes',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // Add Note
+
       .addCase(addNote.pending, (state) => {
         state.addNoteLoading = true;
         state.error = null;
       })
       .addCase(addNote.fulfilled, (state, action) => {
         state.addNoteLoading = false;
-        state.notes.push(action.payload); // Add new note to state
+        state.notes.push(action.payload);
       })
       .addCase(addNote.rejected, (state, action) => {
         state.addNoteLoading = false;
         state.error = action.payload;
       })
-      
-      // Fetch Notes
+     
       .addCase(fetchNotes.pending, (state) => {
         state.fetchNoteLoading = true;
         state.error = null;
       })
       .addCase(fetchNotes.fulfilled, (state, action) => {
         state.fetchNoteLoading = false;
-        state.notes = action.payload; // Populate state with fetched notes
+        state.notes = action.payload;
       })
       .addCase(fetchNotes.rejected, (state, action) => {
         state.fetchNoteLoading = false;
         state.error = action.payload;
       })
       
-      // Delete Note
       .addCase(deleteNote.pending, (state) => {
         state.deleteNoteLoading = true;
         state.error = null;
       })
       .addCase(deleteNote.fulfilled, (state, action) => {
         state.deleteNoteLoading = false;
-        state.notes = state.notes.filter((note) => note.noteId !== action.payload); // Remove deleted note
+        state.notes = state.notes.filter((note) => note.noteId !== action.payload);
       })
       .addCase(deleteNote.rejected, (state, action) => {
         state.deleteNoteLoading = false;
         state.error = action.payload;
       })
       
-      // Update Note
       .addCase(updateNote.pending, (state) => {
         state.updateNoteLoading = true;
         state.error = null;

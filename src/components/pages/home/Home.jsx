@@ -20,7 +20,8 @@ const GlowButton = styled(Button)(({ theme }) => ({
   backgroundColor: "var(--btn-color)",
   borderRadius: "1em",
   outline: "none",
-  boxShadow: "0 0 1em .25em var(--glow-color), 0 0 4em 1em var(--glow-spread-color), inset 0 0 .75em .25em var(--glow-color)",
+  boxShadow:
+    "0 0 1em .25em var(--glow-color), 0 0 4em 1em var(--glow-spread-color), inset 0 0 .75em .25em var(--glow-color)",
   textShadow: "0 0 .5em var(--glow-color)",
   position: "relative",
   transition: "all 0.3s",
@@ -41,10 +42,12 @@ const GlowButton = styled(Button)(({ theme }) => ({
   "&:hover": {
     color: "var(--btn-color)",
     backgroundColor: "var(--glow-color)",
-    boxShadow: "0 0 1em .25em var(--glow-color), 0 0 4em 2em var(--glow-spread-color), inset 0 0 .75em .25em var(--glow-color)",
+    boxShadow:
+      "0 0 1em .25em var(--glow-color), 0 0 4em 2em var(--glow-spread-color), inset 0 0 .75em .25em var(--glow-color)",
   },
   "&:active": {
-    boxShadow: "0 0 0.6em .25em var(--glow-color), 0 0 2.5em 2em var(--glow-spread-color), inset 0 0 .5em .25em var(--glow-color)",
+    boxShadow:
+      "0 0 0.6em .25em var(--glow-color), 0 0 2.5em 2em var(--glow-spread-color), inset 0 0 .5em .25em var(--glow-color)",
   },
 }));
 
@@ -60,10 +63,9 @@ function Home() {
         try {
           const userDocRef = doc(db, "users", user.userId);
           const userDoc = await getDoc(userDocRef);
-          console.log("🚀 ~ fetchUserData ~ userDoc:", userDoc)
+          console.log("🚀 ~ fetchUserData ~ userDoc:", userDoc);
 
           if (userDoc.exists()) {
-
           } else {
             console.log("User document not found in Firestore");
           }
@@ -76,7 +78,16 @@ function Home() {
     fetchUserData();
   }, [user]);
   return (
-    <div style={{ width: "100vw", margin: "0", padding: "0", display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <div
+      style={{
+        width: "100vw",
+        margin: "0",
+        padding: "0",
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+      }}
+    >
       <Container
         maxWidth={false}
         disableGutters
@@ -84,10 +95,10 @@ function Home() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "flex-start",
-          flex: 1, 
+          flex: 1,
           margin: 0,
           padding: 0,
-          paddingBottom: '100px', 
+          paddingBottom: "100px",
         }}
       >
         <Box sx={{ width: "100%", backgroundColor: "yellow" }}>
@@ -102,17 +113,22 @@ function Home() {
             Manage your notes effectively with all the features you need.
           </Typography>
         </Box>
-<Box sx={{width:"100%",display:'flex',justifyContent:"center",alignItems:"center",mt:"25px"}}>
-<GlowButton onClick={handleOpen}>
-          Add New Notes
-        </GlowButton>
-</Box>
-      
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            mt: "25px",
+          }}
+        >
+          <GlowButton onClick={handleOpen}>Add New Notes</GlowButton>
+        </Box>
 
         <AddNoteModal open={open} handleClose={handleClose} />
       </Container>
 
-      <Footer /> 
+      <Footer />
     </div>
   );
 }
