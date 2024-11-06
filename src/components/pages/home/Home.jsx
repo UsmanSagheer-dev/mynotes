@@ -19,14 +19,14 @@ const GlowButton = styled(Button)(({ theme }) => ({
   fontSize: "15px",
   fontWeight: "bold",
   backgroundColor: "var(--btn-color)",
-  borderRadius: "1em",
+  borderRadius: "5em",
   outline: "none",
   boxShadow:
     "0 0 1em .25em var(--glow-color), 0 0 4em 1em var(--glow-spread-color), inset 0 0 .75em .25em var(--glow-color)",
   textShadow: "0 0 .5em var(--glow-color)",
   position: "relative",
   transition: "all 0.3s",
-  width: "170px",
+  width: "230px",
   "&::after": {
     pointerEvents: "none",
     content: '""',
