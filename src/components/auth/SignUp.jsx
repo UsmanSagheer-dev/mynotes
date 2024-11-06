@@ -1,18 +1,26 @@
-
-import React, { useState } from 'react';
-import { TextField, Button, Typography, Container, Box, Card, CardContent, CircularProgress } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
-import { signUp } from '../../store/slices/authSlice';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import {
+  TextField,
+  Button,
+  Typography,
+  Container,
+  Box,
+  Card,
+  CardContent,
+  CircularProgress,
+} from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { signUp } from "../../store/slices/authSlice";
+import { useNavigate } from "react-router-dom";
 
 function SignUp() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [displayName, setDisplayName] = useState('');
-  const [bio, setBio] = useState(''); 
-  const [address, setAddress] = useState('');
-  const [image, setImage] = useState(null); 
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [displayName, setDisplayName] = useState("");
+  const [bio, setBio] = useState("");
+  const [address, setAddress] = useState("");
+  const [image, setImage] = useState(null);
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -32,20 +40,28 @@ function SignUp() {
     );
     setLoading(false);
 
-    if (result.meta.requestStatus === 'fulfilled') {
+    if (result.meta.requestStatus === "fulfilled") {
       console.log("User signed up successfully:", result.payload);
-      navigate('/home'); 
-    } else if (result.meta.requestStatus === 'rejected') {
+      navigate("/home");
+    } else if (result.meta.requestStatus === "rejected") {
       console.error("Signup failed:", result.payload);
       setError(result.payload);
     }
   };
 
   return (
-    <Container maxWidth="sm" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <Card sx={{ width: '100%', maxWidth: 400, boxShadow: 3 }}>
+    <Container
+      maxWidth="sm"
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+      }}
+    >
+      <Card sx={{ width: "100%", maxWidth: 400, boxShadow: 3 }}>
         <CardContent>
-          <Box sx={{ textAlign: 'center', mb: 2 }}>
+          <Box sx={{ textAlign: "center", mb: 2 }}>
             <Typography variant="h5" component="h1">
               Sign Up
             </Typography>
@@ -98,7 +114,12 @@ function SignUp() {
               value={address}
               onChange={(e) => setAddress(e.target.value)}
             />
-            <Button variant="contained" component="label" fullWidth sx={{ marginY: 2 }}>
+            <Button
+              variant="contained"
+              component="label"
+              fullWidth
+              sx={{ marginY: 2 }}
+            >
               Upload Profile Image
               <input type="file" hidden onChange={handleImageUpload} />
             </Button>
@@ -115,13 +136,13 @@ function SignUp() {
               sx={{ mt: 3, mb: 2 }}
               disabled={loading}
             >
-              {loading ? <CircularProgress size={24} /> : 'Sign Up'}
+              {loading ? <CircularProgress size={24} /> : "Sign Up"}
             </Button>
           </form>
-          <Box sx={{ textAlign: 'center', mt: 2 }}>
+          <Box sx={{ textAlign: "center", mt: 2 }}>
             <Typography variant="body2" color="textSecondary">
-              Already have an account?{' '}
-              <Button variant="text" onClick={() => navigate('/login')}>
+              Already have an account?{" "}
+              <Button variant="text" onClick={() => navigate("/login")}>
                 Log In
               </Button>
             </Typography>

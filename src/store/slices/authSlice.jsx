@@ -1,35 +1,45 @@
-// authSlice.js
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { auth, db, storage } from '../../config/firebase/firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { getCurrentUser } from './userSlice'; 
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { auth, db, storage } from "../../config/firebase/firebase";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { getCurrentUser } from "./userSlice";
 
 const getInitialState = () => {
-  const userData = localStorage.getItem('user');
-  return userData 
-    ? { isAuthenticated: true, user: JSON.parse(userData).user } 
+  const userData = localStorage.getItem("user");
+  return userData
+    ? { isAuthenticated: true, user: JSON.parse(userData).user }
     : { isAuthenticated: false, user: null };
 };
 
 export const signUp = createAsyncThunk(
-  'auth/signUp',
-  async ({ email, password, displayName, bio, address, image }, { rejectWithValue }) => {
+  "auth/signUp",
+  async (
+    { email, password, displayName, bio, address, image },
+    { rejectWithValue }
+  ) => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
 
       await updateProfile(user, { displayName });
 
-      let imageUrl = '';
+      let imageUrl = "";
       if (image) {
         const storageRef = ref(storage, `profileImages/${user.uid}`);
         await uploadBytes(storageRef, image);
         imageUrl = await getDownloadURL(storageRef);
       }
 
-      await setDoc(doc(db, 'users', user.uid), {
+      await setDoc(doc(db, "users", user.uid), {
         userId: user.uid,
         displayName,
         email: user.email,
@@ -47,7 +57,10 @@ export const signUp = createAsyncThunk(
         address,
         imageUrl,
       };
-      localStorage.setItem('user', JSON.stringify({ isAuthenticated: true, user: userPayload }));
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ isAuthenticated: true, user: userPayload })
+      );
       return userPayload;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -56,13 +69,15 @@ export const signUp = createAsyncThunk(
 );
 
 export const login = createAsyncThunk(
-  'auth/login',
+  "auth/login",
   async ({ email, password }, { dispatch, rejectWithValue }) => {
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
-
-      // Immediately fetch user profile after login
       await dispatch(getCurrentUser({ userId: user.uid }));
 
       return {
@@ -77,11 +92,11 @@ export const login = createAsyncThunk(
 );
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState: getInitialState(),
   reducers: {
     clearAuth(state) {
-      localStorage.removeItem('user');
+      localStorage.removeItem("user");
       state.isAuthenticated = false;
       state.user = null;
       state.signupError = null;
@@ -109,7 +124,10 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
         state.user = action.payload;
         state.loginError = null;
-        localStorage.setItem('user', JSON.stringify({ isAuthenticated: true, user: action.payload }));
+        localStorage.setItem(
+          "user",
+          JSON.stringify({ isAuthenticated: true, user: action.payload })
+        );
       })
       .addCase(login.rejected, (state, action) => {
         state.isAuthenticated = false;
@@ -118,7 +136,6 @@ const authSlice = createSlice({
   },
 });
 
-// Export actions and reducer
 export const { logout, setUser, clearAuth } = authSlice.actions;
 
 export default authSlice.reducer;
