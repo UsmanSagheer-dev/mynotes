@@ -81,9 +81,21 @@ function Home() {
   }, [user]);
 
   return (
-    <div style={styles.mainContainer}>
-      <Container maxWidth={false} disableGutters sx={styles.container}>
-        <Box sx={styles.navbar}>
+    <div style={{ width: "100vw", margin: "0", padding: "0", display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <Container
+        maxWidth={false}
+        disableGutters
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-start",
+          flex: 1, 
+          margin: 0,
+          padding: 0,
+          paddingBottom: '100px', 
+        }}
+      >
+        <Box sx={{ width: "100%", backgroundColor: "yellow" }}>
           <Navbar />
         </Box>
 
@@ -95,10 +107,12 @@ function Home() {
             Manage your notes effectively with all the features you need.
           </Typography>
         </Box>
-
-        <Box sx={styles.buttonContainer}>
-          <GlowButton onClick={handleOpen}>Add New Notes</GlowButton>
-        </Box>
+<Box sx={{width:"100%",display:'flex',justifyContent:"center",alignItems:"center",mt:"25px"}}>
+<GlowButton onClick={handleOpen}>
+          Add New Notes
+        </GlowButton>
+</Box>
+      
 
         <AddNoteModal open={open} handleClose={handleClose} />
       </Container>

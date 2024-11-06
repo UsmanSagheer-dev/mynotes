@@ -1,13 +1,10 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { auth, db, storage } from "../../config/firebase/firebase";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  updateProfile,
-} from "firebase/auth";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { getCurrentUser } from "./userSlice";
+// authSlice.js
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { auth, db, storage } from '../../config/firebase/firebase';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { getCurrentUser } from './userSlice'; 
 
 const getInitialState = () => {
   const userData = localStorage.getItem("user");
@@ -78,6 +75,8 @@ export const login = createAsyncThunk(
         password
       );
       const user = userCredential.user;
+
+      // Immediately fetch user profile after login
       await dispatch(getCurrentUser({ userId: user.uid }));
 
       return {
@@ -136,6 +135,7 @@ const authSlice = createSlice({
   },
 });
 
+// Export actions and reducer
 export const { logout, setUser, clearAuth } = authSlice.actions;
 
 export default authSlice.reducer;
