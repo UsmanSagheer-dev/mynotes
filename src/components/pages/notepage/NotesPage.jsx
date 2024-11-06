@@ -57,39 +57,44 @@ function NotesPage() {
           <CircularProgress />
         </Box>
       ) : notes.length > 0 ? (
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3, justifyContent: "start", marginTop: 2 ,marginLeft:4}}>
-          {notes.map((note) => (
-            <Card key={note.id} sx={{ width: 400, marginBottom: 2 }}>
-              {note.imageURL && (
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image={note.imageURL}
-                  alt={note.title || "Note Image"}
-                />
-              )}
-              <CardContent>
-                <Typography sx={{color:"red",fontFamily:'fantasy'}} variant="h6">{note.title || "Untitled"}</Typography>
-                <Typography color="textSecondary">
-                  {note.category || "No Category"}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {formatDate(note.date)}
-                </Typography>
-                <Divider/>
-                <Typography sx={{ marginTop: 1 }}>{note.content || "No Content"}</Typography>
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  onClick={() => handleDeleteNote(note.id)}
-                  sx={{ marginTop: 2 }}
-                >
-                  Delete Note
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </Box>
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3, justifyContent: "start", marginTop: 2, marginLeft: 4 }}>
+        {notes.map((note) => (
+          <Card key={note.id} sx={{ width: 400, }}>
+            {note.imageURL && (
+              <CardMedia
+                component="img"
+                height="350px"
+                image={note.imageURL}
+                alt={note.title || "Note Image"}
+              />
+            )}
+            <CardContent>
+              <Typography sx={{ color: "red", fontFamily: 'fantasy' }} variant="h6">
+                {note.title || "Untitled"}
+              </Typography>
+              <Typography color="textSecondary">
+                {note.category || "No Category"}
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                {formatDate(note.date)}
+              </Typography>
+              <Divider />
+              <Typography sx={{ marginTop: 1 }}>
+                {note.content || "No Content"}
+              </Typography>
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={() => handleDeleteNote(note.id)}
+                sx={{ marginTop: 2 }}
+              >
+                Delete Note
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
+      </Box>
+      
       ) : dataLoaded ? (
         <Typography>No notes available. Click "Add New Notes" to get started!</Typography>
       ) : null}
