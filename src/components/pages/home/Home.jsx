@@ -89,10 +89,10 @@ function Home() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "flex-start",
-          flex: 1, 
+          flex: 1,
           margin: 0,
           padding: 0,
-          paddingBottom: '100px', 
+          paddingBottom: "100px",
         }}
       >
         <Box sx={{ width: "100%", backgroundColor: "yellow" }}>
@@ -107,12 +107,17 @@ function Home() {
             Manage your notes effectively with all the features you need.
           </Typography>
         </Box>
-<Box sx={{width:"100%",display:'flex',justifyContent:"center",alignItems:"center",mt:"25px"}}>
-<GlowButton onClick={handleOpen}>
-          Add New Notes
-        </GlowButton>
-</Box>
-      
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            mt: "25px",
+          }}
+        >
+          <GlowButton onClick={handleOpen}>Add New Notes</GlowButton>
+        </Box>
 
         <AddNoteModal open={open} handleClose={handleClose} />
       </Container>
@@ -123,4 +128,3 @@ function Home() {
 }
 
 export default Home;
-
