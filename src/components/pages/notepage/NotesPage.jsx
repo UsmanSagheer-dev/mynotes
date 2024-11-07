@@ -1,9 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Card, CardContent, Button, CardMedia, CircularProgress, Divider } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  Button,
+  CardMedia,
+  CircularProgress,
+  Divider,
+} from "@mui/material";
 import Navbar from "../../shared/navbar/Navbar";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchNotes, deleteNote } from "../../../store/slices/noteSlice";
 import { auth } from "../../../config/firebase/firebase";
+import jsPDF from "jspdf"; 
 
 function NotesPage() {
   const dispatch = useDispatch();
@@ -45,8 +55,28 @@ function NotesPage() {
     return "Invalid Date";
   };
 
+  // New function to download a note as PDF
+  const handleDownloadPDF = (note) => {
+    const doc = new jsPDF();
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.text(note.title || "Untitled", 10, 10);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+    doc.text(`Category: ${note.category || "No Category"}`, 10, 20);
+    doc.text(`Date: ${formatDate(note.date)}`, 10, 30);
+    doc.text(`Content:`, 10, 40);
+
+    doc.setFont("helvetica", "normal");
+    doc.text(note.content || "No Content", 10, 50);
+
+    doc.save(`${note.title || "note"}.pdf`);
+  };
+
   return (
-    <Box sx={{ }}>
+    <Box sx={{}}>
       <Navbar />
       <Typography variant="h4" gutterBottom>
         Your Saved Notes
@@ -57,46 +87,68 @@ function NotesPage() {
           <CircularProgress />
         </Box>
       ) : notes.length > 0 ? (
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3, justifyContent: "start", marginTop: 2, marginLeft: 4 }}>
-        {notes.map((note) => (
-          <Card key={note.id} sx={{ width: 400, }}>
-            {note.imageURL && (
-              <CardMedia
-                component="img"
-                height="350px"
-                image={note.imageURL}
-                alt={note.title || "Note Image"}
-              />
-            )}
-            <CardContent>
-              <Typography sx={{ color: "red", fontFamily: 'fantasy' }} variant="h6">
-                {note.title || "Untitled"}
-              </Typography>
-              <Typography color="textSecondary">
-                {note.category || "No Category"}
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                {formatDate(note.date)}
-              </Typography>
-              <Divider />
-              <Typography sx={{ marginTop: 1 }}>
-                {note.content || "No Content"}
-              </Typography>
-              <Button
-                variant="outlined"
-                color="secondary"
-                onClick={() => handleDeleteNote(note.id)}
-                sx={{ marginTop: 2 }}
-              >
-                Delete Note
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </Box>
-      
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 3,
+            justifyContent: "start",
+            marginTop: 2,
+            marginLeft: 4,
+          }}
+        >
+          {notes.map((note) => (
+            <Card key={note.id} sx={{ width: 400 }}>
+              {note.imageURL && (
+                <CardMedia
+                  component="img"
+                  height="350px"
+                  image={note.imageURL}
+                  alt={note.title || "Note Image"}
+                />
+              )}
+              <CardContent>
+                <Typography
+                  sx={{ color: "red", fontFamily: "fantasy" }}
+                  variant="h6"
+                >
+                  {note.title || "Untitled"}
+                </Typography>
+                <Typography color="textSecondary">
+                  {note.category || "No Category"}
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  {formatDate(note.date)}
+                </Typography>
+                <Divider />
+                <Typography sx={{ marginTop: 1 }}>
+                  {note.content || "No Content"}
+                </Typography>
+                <Box sx={{ display: "flex", gap: 2, marginTop: 2 }}>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => handleDeleteNote(note.id)}
+                  >
+                    Delete Note
+                  </Button>
+                  {/* New Download Button */}
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={() => handleDownloadPDF(note)}
+                  >
+                    Download as PDF
+                  </Button>
+                </Box>
+              </CardContent>
+            </Card>
+          ))}
+        </Box>
       ) : dataLoaded ? (
-        <Typography>No notes available. Click "Add New Notes" to get started!</Typography>
+        <Typography>
+          No notes available. Click "Add New Notes" to get started!
+        </Typography>
       ) : null}
     </Box>
   );
