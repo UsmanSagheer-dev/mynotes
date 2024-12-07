@@ -1,23 +1,37 @@
-
 import React, { useState } from "react";
-import { Box, Typography, Modal, TextField, Button, Input } from "@mui/material";
-import { useDispatch } from 'react-redux';
-import { addNote } from '../../store/slices/noteSlice';
-import { auth, storage } from '../../config/firebase/firebase';
+import {
+  Box,
+  Typography,
+  Modal,
+  TextField,
+  Button,
+  Input,
+} from "@mui/material";
+import { useDispatch } from "react-redux";
+import { addNote } from "../../store/slices/noteSlice";
+import { auth, storage } from "../../config/firebase/firebase";
 import { useNavigate } from "react-router-dom";
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 function AddNoteModal({ open, handleClose }) {
   const [newNote, setNewNote] = useState("");
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
-  const [image, setImage] = useState(null); 
+  const [image, setImage] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userId = auth.currentUser ? auth.currentUser.uid : null;
 
   const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
+    const file = e.target.files[0];
+    const maxSize = 25 * 1024;
+
+    if (file && file.size > maxSize) {
+      alert("Image size should be less than 25KB");
+      e.target.value = null; // Clear the input
+      return;
+    }
+    setImage(file);
   };
 
   const handleAddNote = async () => {
@@ -30,8 +44,8 @@ function AddNoteModal({ open, handleClose }) {
     if (image) {
       try {
         const imageRef = ref(storage, `notes/${userId}/${image.name}`);
-        await uploadBytes(imageRef, image); 
-        imageURL = await getDownloadURL(imageRef); 
+        await uploadBytes(imageRef, image);
+        imageURL = await getDownloadURL(imageRef);
       } catch (error) {
         console.error("Error uploading image:", error);
       }
@@ -42,11 +56,11 @@ function AddNoteModal({ open, handleClose }) {
       category,
       content: newNote,
       userId,
-      imageURL, 
+      imageURL,
     };
 
     dispatch(addNote(noteData)).then((result) => {
-      if (result.meta.requestStatus === 'fulfilled') {
+      if (result.meta.requestStatus === "fulfilled") {
         console.log("Note successfully added to Firebase:", result.payload);
         handleClose();
         navigate("/notes");
@@ -58,7 +72,7 @@ function AddNoteModal({ open, handleClose }) {
     setTitle("");
     setCategory("");
     setNewNote("");
-    setImage(null); 
+    setImage(null);
   };
 
   return (

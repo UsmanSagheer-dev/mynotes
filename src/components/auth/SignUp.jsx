@@ -22,12 +22,20 @@ function SignUp() {
   const [image, setImage] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [imageError, setImageError] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const signupError = useSelector((state) => state.user.signupError);
   const handleImageUpload = (e) => {
-    if (e.target.files[0]) {
-      setImage(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 25 * 1024) { // 25kb in bytes
+        setImageError("Image size should not exceed 25kb");
+        setImage(null);
+      } else {
+        setImageError("");
+        setImage(file);
+      }
     }
   };
 
@@ -123,6 +131,11 @@ function SignUp() {
               Upload Profile Image
               <input type="file" hidden onChange={handleImageUpload} />
             </Button>
+            {imageError && (
+              <Typography color="error" variant="body2" sx={{ mt: 1 }}>
+                {imageError}
+              </Typography>
+            )}
             {signupError && (
               <Typography color="error" variant="body2" sx={{ mt: 1 }}>
                 {signupError}
